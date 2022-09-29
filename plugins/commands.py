@@ -96,6 +96,7 @@ async def start(client, message):
         )
         return
     data = message.command[1]
+    sendFiles = []
     try:
         pre, file_id = data.split('_', 1)
     except:
@@ -128,26 +129,36 @@ async def start(client, message):
             if f_caption is None:
                 f_caption = f"{title}"
             try:
-                await client.send_cached_media(
+                k = await client.send_cached_media(
                     chat_id=message.from_user.id,
                     file_id=msg.get("file_id"),
                     caption=f_caption,
                     protect_content=msg.get('protect', False),
                     )
+                    sendFiles.append(k)
             except FloodWait as e:
                 await asyncio.sleep(e.x)
                 logger.warning(f"Floodwait of {e.x} sec.")
-                await client.send_cached_media(
+                k = await client.send_cached_media(
                     chat_id=message.from_user.id,
                     file_id=msg.get("file_id"),
                     caption=f_caption,
                     protect_content=msg.get('protect', False),
                     )
+                    sendFiles.append(k)
             except Exception as e:
                 logger.warning(e, exc_info=True)
                 continue
             await asyncio.sleep(1) 
         await sts.delete()
+        await client.send_message(
+            text="This files will delete after 5 Mints !!!",
+            chat_id=message.from_user.id,
+        )
+        await asyncio.sleep(60 * 5)
+        for k in sendFiles:
+            await k.delete()
+        sendFiles = []
         return
     elif data.split("-", 1)[0] == "DSTORE":
         sts = await message.reply("Please wait")
@@ -204,6 +215,7 @@ async def start(client, message):
                 file_id=file_id,
                 protect_content=True if pre == 'filep' else False,
                 )
+            sendFiles.append(msg)
             filetype = msg.media
             file = getattr(msg, filetype)
             title = file.file_name
@@ -231,12 +243,22 @@ async def start(client, message):
             f_caption=f_caption
     if f_caption is None:
         f_caption = f"{files.file_name}"
-    await client.send_cached_media(
+    k = await client.send_cached_media(
         chat_id=message.from_user.id,
         file_id=file_id,
         caption=f_caption,
         protect_content=True if pre == 'filep' else False,
         )
+        sendFiles.append(k)
+
+    await client.send_message(
+        text="This files will delete after 5 Mints !!!",
+        chat_id=message.from_user.id
+    )
+    await asyncio.sleep(60 * 5)
+    for k in sendFiles:
+        await k.delete()
+    sendFiles = []
                     
 
 @Client.on_message(filters.command('channel') & filters.user(ADMINS))
