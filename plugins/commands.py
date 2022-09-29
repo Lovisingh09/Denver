@@ -248,7 +248,7 @@ async def start(client, message):
             file_id=file_id,
             caption=f_caption,
             )
-        sendFiles.append(k)
+            sendFiles.append(k)
     
     await client.send_message(
         text="This files will delete after 5 Mints !!!",
