@@ -242,24 +242,22 @@ async def start(client, message):
             logger.exception(e)
             f_caption=f_caption
     if f_caption is None:
-        f_caption = f"{files.file_name}"
-    k = await client.send_cached_media(
-        chat_id=message.from_user.id,
-        file_id=file_id,
-        caption=f_caption,
-        protect_content=True if pre == 'filep' else False,
-        )
+            f_caption = f"{files.file_name}"
+        k = await client.send_cached_media(
+            chat_id=message.from_user.id,
+            file_id=file_id,
+            caption=f_caption,
+            )
         sendFiles.append(k)
-
+    
     await client.send_message(
-        text="This files will delete after 5 Mints !!!",
+        text="This files will delete after 5 mints !!!\n\n please save this File",
         chat_id=message.from_user.id
     )
     await asyncio.sleep(60 * 5)
     for k in sendFiles:
         await k.delete()
-    sendFiles = []
-                    
+    sendFiles = [] 
 
 @Client.on_message(filters.command('channel') & filters.user(ADMINS))
 async def channel_info(bot, message):
