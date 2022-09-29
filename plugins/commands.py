@@ -251,7 +251,7 @@ async def start(client, message):
         sendFiles.append(k)
     
     await client.send_message(
-        text="This files will delete after 5 mints !!!\n\n please save this File",
+        text="This files will delete after 5 Mints !!!",
         chat_id=message.from_user.id
     )
     await asyncio.sleep(60 * 5)
